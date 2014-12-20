@@ -41,6 +41,15 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="15dp" />
 
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:id="@+id/ImageView"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:longClickable="false"
+                        android:src="@drawable/no_name" />
+
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -1,6 +1,7 @@
 package com.lambertsoft.contactapp;
 
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ public class MainActivity extends ActionBarActivity {
 
     EditText name, address, phone;
     Button add;
+    ImageView imageContact;
     List<Contact> contactList = new ArrayList<Contact>();
     ListView listViewContact;
 
@@ -38,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         phone = (EditText)findViewById(R.id.phoneTxt);
         add = (Button)findViewById(R.id.addBtn);
         listViewContact = (ListView) findViewById(R.id.listView);
-
+        imageContact = (ImageView) findViewById(R.id.ImageView);
 
 
         TabHost tab = (TabHost) findViewById(R.id.tabHost);
@@ -83,6 +86,24 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+
+        imageContact.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Image"), 1);
+            }
+        });
+    }
+
+    public void onActivityResult (int reqCode, int resCode, Intent data) {
+
+        if (resCode == RESULT_OK)
+            if (reqCode == 1 )
+                imageContact.setImageURI(data.getData());
+
     }
 
 
