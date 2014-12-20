@@ -2,6 +2,7 @@ package com.lambertsoft.contactapp;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,6 +29,7 @@ public class MainActivity extends ActionBarActivity {
     EditText name, address, phone;
     Button add;
     ImageView imageContact;
+    Uri imageUri;
     List<Contact> contactList = new ArrayList<Contact>();
     ListView listViewContact;
 
@@ -79,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Contact nc = new Contact(name.getText().toString(), address.getText().toString(), phone.getText().toString());
+                Contact nc = new Contact(name.getText().toString(), address.getText().toString(), phone.getText().toString(), imageUri);
                 contactList.add(nc);
                 Toast.makeText(getApplication(), "Contact created... " + nc.getName(), 5).show();
                 listViewContact.setAdapter(new ContactListAdapter());
@@ -101,9 +103,10 @@ public class MainActivity extends ActionBarActivity {
     public void onActivityResult (int reqCode, int resCode, Intent data) {
 
         if (resCode == RESULT_OK)
-            if (reqCode == 1 )
+            if (reqCode == 1 ) {
+                imageUri = data.getData();
                 imageContact.setImageURI(data.getData());
-
+            }
     }
 
 
@@ -147,6 +150,8 @@ public class MainActivity extends ActionBarActivity {
             address.setText(cc.getAddress());
             TextView phone = (TextView) view.findViewById(R.id.phoneView);
             phone.setText(cc.getPhone());
+            ImageView imageViewItem = (ImageView)view.findViewById(R.id.imageViewItem);
+            imageViewItem.setImageURI(cc.getImageUri());
 
             return view;
 
