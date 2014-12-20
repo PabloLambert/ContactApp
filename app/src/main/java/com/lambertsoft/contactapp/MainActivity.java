@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ public class MainActivity extends ActionBarActivity {
     EditText name, address, phone;
     Button add;
     List<Contact> contactList = new ArrayList<Contact>();
+    ListView listViewContact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class MainActivity extends ActionBarActivity {
         address = (EditText) findViewById(R.id.addressTxt);
         phone = (EditText)findViewById(R.id.phoneTxt);
         add = (Button)findViewById(R.id.addBtn);
+        listViewContact = (ListView) findViewById(R.id.listView);
+
 
 
         TabHost tab = (TabHost) findViewById(R.id.tabHost);
@@ -74,7 +78,8 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Contact nc = new Contact(name.getText().toString(), address.getText().toString(), phone.getText().toString());
                 contactList.add(nc);
-                Toast.makeText(getApplication(), "Conctact created... " + nc.getName(), 5).show();
+                Toast.makeText(getApplication(), "Contact created... " + nc.getName(), 5).show();
+                listViewContact.setAdapter(new ContactListAdapter());
 
             }
         });
