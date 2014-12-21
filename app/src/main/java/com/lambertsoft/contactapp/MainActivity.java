@@ -29,9 +29,10 @@ public class MainActivity extends ActionBarActivity {
     EditText name, address, phone;
     Button add;
     ImageView imageContact;
-    Uri imageUri;
+    Uri imageUri = Uri.parse("android.resource://com.lambertsoft.contactapp/drawable/no_name.png");
     List<Contact> contactList = new ArrayList<Contact>();
     ListView listViewContact;
+    DataBaseHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,8 @@ public class MainActivity extends ActionBarActivity {
         add = (Button)findViewById(R.id.addBtn);
         listViewContact = (ListView) findViewById(R.id.listView);
         imageContact = (ImageView) findViewById(R.id.ImageView);
+
+        dbHandler = new DataBaseHandler(getApplicationContext());
 
 
         TabHost tab = (TabHost) findViewById(R.id.tabHost);
@@ -81,8 +84,9 @@ public class MainActivity extends ActionBarActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Contact nc = new Contact(name.getText().toString(), address.getText().toString(), phone.getText().toString(), imageUri);
+                Contact nc = new Contact(dbHandler.getContactsCount(), name.getText().toString(), address.getText().toString(), phone.getText().toString(), imageUri);
                 contactList.add(nc);
+                dbHandler.createContact(nc);
                 Toast.makeText(getApplication(), "Contact created... " + nc.getName(), 5).show();
                 listViewContact.setAdapter(new ContactListAdapter());
 
@@ -98,6 +102,16 @@ public class MainActivity extends ActionBarActivity {
                 startActivityForResult(Intent.createChooser(intent, "Select Image"), 1);
             }
         });
+
+        List<Contact> storedContacts = dbHandler.getAllContacts();
+        int i = dbHandler.getContactsCount();
+
+        for (int j = 0; j < i; j++ )
+            contactList.add(storedContacts.get(j));
+
+        if (!storedContacts.isEmpty())
+            listViewContact.setAdapter(new ContactListAdapter());
+
     }
 
     public void onActivityResult (int reqCode, int resCode, Intent data) {
