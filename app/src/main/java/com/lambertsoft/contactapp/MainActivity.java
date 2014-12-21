@@ -7,10 +7,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +35,8 @@ public class MainActivity extends ActionBarActivity {
     List<Contact> contactList = new ArrayList<Contact>();
     ListView listViewContact;
     DataBaseHandler dbHandler;
+    ArrayAdapter<Contact> adapter;
+    int selectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,16 @@ public class MainActivity extends ActionBarActivity {
         add = (Button)findViewById(R.id.addBtn);
         listViewContact = (ListView) findViewById(R.id.listView);
         imageContact = (ImageView) findViewById(R.id.ImageView);
+
+        registerForContextMenu(listViewContact);
+        listViewContact.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedItem = position;
+                return false;
+            }
+        });
+
 
         dbHandler = new DataBaseHandler(getApplicationContext());
 
@@ -88,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
                 contactList.add(nc);
                 dbHandler.createContact(nc);
                 Toast.makeText(getApplication(), "Contact created... " + nc.getName(), 5).show();
-                listViewContact.setAdapter(new ContactListAdapter());
+                adapter.notifyDataSetChanged();
 
             }
         });
@@ -104,13 +118,9 @@ public class MainActivity extends ActionBarActivity {
         });
 
         List<Contact> storedContacts = dbHandler.getAllContacts();
-        int i = dbHandler.getContactsCount();
-
-        for (int j = 0; j < i; j++ )
-            contactList.add(storedContacts.get(j));
-
-        if (!storedContacts.isEmpty())
-            listViewContact.setAdapter(new ContactListAdapter());
+        contactList.addAll(storedContacts);
+        adapter = new ContactListAdapter();
+        listViewContact.setAdapter(adapter);
 
     }
 
@@ -123,6 +133,30 @@ public class MainActivity extends ActionBarActivity {
             }
     }
 
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+        menu.setHeaderIcon(R.drawable.android_icon_small);
+        menu.setHeaderTitle("Contact Options");
+        menu.add(Menu.NONE, 0, Menu.NONE, "Modify Contact");
+        menu.add(Menu.NONE, 1, Menu.NONE, "Delete Contact");
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                Toast.makeText(getApplicationContext(), "Click 0: " + selectedItem, 5).show();
+                break;
+            case 1:
+                dbHandler.deleteContact(contactList.get(selectedItem));
+                contactList.remove(selectedItem);
+                adapter.notifyDataSetChanged();
+                //Toast.makeText(getApplicationContext(), "Click 1: "+ selectedItem, 5).show();
+                break;
+
+        }
+        return super.onContextItemSelected(item);
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
