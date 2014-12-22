@@ -106,12 +106,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         ArrayList<Contact> contactList = new ArrayList<Contact>();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CONTACT, null);
-        cursor.moveToFirst();
-        do {
-            Contact cc = new Contact(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), Uri.parse(cursor.getString(4)));
-            contactList.add(cc);
-        } while ( cursor.moveToNext());
-
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do {
+                Contact cc = new Contact(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), Uri.parse(cursor.getString(4)));
+                contactList.add(cc);
+            } while (cursor.moveToNext());
+        }
         cursor.close();
         db.close();
         return contactList;
